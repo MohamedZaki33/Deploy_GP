@@ -1,4 +1,3 @@
-sqlite3
 PyPDF2
 pandas
 numpy
