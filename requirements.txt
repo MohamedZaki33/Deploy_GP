@@ -11,6 +11,7 @@ cosine_similarity
 pyresparser
 docx
 Document
+exceptions
 fuzzywuzzy
 fuzz
 gensim
