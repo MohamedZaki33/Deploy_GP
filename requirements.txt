@@ -11,7 +11,7 @@ tqdm==4.61.2
 regex==2021.4.4
 zipp==3.4.1
 importlib-metadata==4.5.0
-click==8.0.1
+click>=7.1.1,<7.2.0
 nltk==3.6.2
 pillow==8.2.0
 fonttools==4.25.0
@@ -46,7 +46,7 @@ blis==0.7.4
 catalogue==2.0.4
 srsly==2.4.1
 preshed==3.0.5
-thinc==8.0.6
+thinc>=8.0.8,<8.1.0
 spacy-legacy==3.0.8
 MarkupSafe==2.0.1
 jinja2==3.0.1
@@ -67,6 +67,6 @@ fuzzywuzzy==0.18.0
 gensim==4.1.2
 Environment==1.0.0
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.1.0/en_core_web_sm-3.1.0-py3-none-any.whl
-rapidfuzz==1.6.1
+rapidfuzz>=2.3.0,<4.0.0
 Levenshtein
 python-Levenshtein
