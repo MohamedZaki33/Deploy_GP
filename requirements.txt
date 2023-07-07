@@ -64,7 +64,6 @@ soupsieve==2.2.1
 beautifulsoup4==4.9.3
 googlesearch-python==1.0.1
 fuzzywuzzy==0.18.0
-fuzz==0.0.1
 gensim==4.1.2
 Environment==1.0.0
 en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.1.0/en_core_web_sm-3.1.0-py3-none-any.whl
