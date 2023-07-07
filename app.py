@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import ast
 import spacy
+nlp = spacy.load("en_core_web_sm")
 import nltk
 nltk.download('stopwords')
 from matplotlib import pyplot as plt, cm
