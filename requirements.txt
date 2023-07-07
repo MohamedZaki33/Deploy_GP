@@ -11,7 +11,7 @@ tqdm==4.61.2
 regex==2021.4.4
 zipp==3.4.1
 importlib-metadata==4.5.0
-click>=7.1.1,<7.2.0
+click>=8.0.0,<9.0.0
 nltk==3.6.2
 pillow==8.2.0
 fonttools==4.25.0
@@ -70,4 +70,3 @@ en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_
 rapidfuzz>=2.3.0,<4.0.0
 Levenshtein
 python-Levenshtein
-Flask
