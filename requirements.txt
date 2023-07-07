@@ -1,7 +1,6 @@
 PyPDF2
 pandas
 numpy
-ast
 spacy
 nltk
 matplotlib
