@@ -68,6 +68,6 @@ en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_
 rapidfuzz>=2.3.0,<4.0.0
 Levenshtein
 python-Levenshtein
-click>=7.1.2,<8.0.0
 typer>=0.3.2,<1.0.0
-flask
+Flask>=2.0.0,<3.0.0
+click>=8.0.0,<9.0.0,<7.1.2
