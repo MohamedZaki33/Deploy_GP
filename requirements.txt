@@ -70,4 +70,3 @@ Levenshtein
 python-Levenshtein
 typer>=0.3.2,<1.0.0
 Flask>=2.0.0,<3.0.0
-click>=8.0.0,<9.0.0,<7.1.2
