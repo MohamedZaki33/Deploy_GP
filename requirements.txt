@@ -60,7 +60,6 @@ sortedcontainers==2.4.0
 pyresparser==1.0.6
 lxml==4.6.3
 python-docx==0.8.11
-Document==0.4.1
 soupsieve==2.2.1
 beautifulsoup4==4.9.3
 googlesearch-python==1.0.1
