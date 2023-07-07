@@ -1,5 +1,6 @@
 import difflib
 import sqlite3
+import tkinter as tk
 import PyPDF2
 import pandas as pd
 import numpy as np
@@ -470,9 +471,21 @@ def predict_recommendation():
         result = get_top_n_tfidf(cv_skills_str, 10)
         # skills = get_cv_skills(cv_skills, result)
         result['cosine_similarity'] = result['cosine_similarity'].apply(lambda x: round(x, 2) * 100)
-        # Create the figure in a separate thread
-        t = threading.Thread(target=create_figure, args=(result['Job_title'], result['cosine_similarity']))
-        t.start()
+        color_map = cm.get_cmap('cool')  # choose a color map
+        colors = color_map(result['cosine_similarity'])
+        fig, ax = plt.subplots(figsize=(8, 5))
+        ax.barh(result['Job_title'], result['cosine_similarity'], color=colors)
+        ax.set_title('Top job recommendations based on similarity', fontsize=12)
+        plt.tight_layout()
+
+        # Save the plot to a file and close the figure
+        plot_path = os.path.join(app.static_folder, 'bar_plot.png')
+        plt.savefig(plot_path)
+        plt.close(fig)
+
+        # # Create the figure in a separate thread
+        # t = threading.Thread(target=create_figure, args=(result['Job_title'], result['cosine_similarity']))
+        # t.start()
 
         # Pass the similar_jobs data, plot path, matching CV skills, and recommended CV skills to the templates
         return render_template('recommendation_result.html', best_jobs=result, plot_path='bar_plot.png', cv_skills=Cv_skills)
