@@ -131,10 +131,10 @@
         <!-- Navbar & Hero Start -->
         <div class="container-xxl position-relative p-0">
             <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
-<!--                <a href="" class="navbar-brand p-0">-->
+                <a href="" class="navbar-brand p-0">
                     <h1 class="m-0">Recommendation Results</h1>
 
-<!--                </a>-->
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                     <span class="fa fa-bars"></span>
                 </button>
@@ -250,21 +250,18 @@
 <!--          </div>-->
 
           <button class="btn btn-secondary py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft" type="submit">Submit</button>
-            <br>
-            <br>
-             <div style="margin-left: 20%;">
-              <div>
-                    <p style="margin-left: 3%;"> This set of links to the top 5 recommended job openings is based on our analysis of your skills and experience: </p>
-              </div>
-              <div id="similar-jobs"></div>
-            </div>
         </form>
 <!--      </div>-->
 
 
 <!--    </div>-->
 
-
+     <div style="margin-left: 20%;">
+      <div>
+            <p style="margin-left: 3%;"> Here's a job link that's similar to what you're looking for </p>
+      </div>
+      <div id="similar-jobs"></div>
+    </div>
 <!--    <div id="matching-cv-skills"></div>-->
 
 
@@ -320,7 +317,9 @@
         var jobTitleIndex = document.getElementById('job-select').selectedIndex;
 
         // Get the selected job title and action from the form data
-        var jobTitle = formData.get('job_title');
+
+        //var jobTitle = formData.get('job_title');
+        var jobTitle = document.getElementById('job-select').value ;
         var action = formData.get('action');
 
         // Send an AJAX request to the server to handle the form submission
