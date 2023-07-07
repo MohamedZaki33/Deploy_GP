@@ -47,7 +47,7 @@ conn.close()
 conn2 = sqlite3.connect('all_skills.db')
 all_skills = pd.read_sql_query('SELECT * FROM jobs', conn2)
 conn2.close()
-# print(all_skills.head())
+# print(job_data.head())
 
 # #Preprocessind
 def data_preprocessing_text(text):
@@ -184,62 +184,46 @@ def get_similar_jobs_for_job(job_title, num_results=5):
 
     # Return the list of similar jobs
     return similar_jobs[:num_results]
-# def get_skills_for_cv(cv_skills,job_skills):
-#     matching_cv_skills=[]
-#     recommended_cv_skills =['esraa']
-#     # cv_skills_str = " ".join(cv_skills)
-#     # cv_skills = cv_skills_str.split()
+
+
+# # Create a mapping of normalized skill forms to the original skill names
+# normalized_skill_dict = {}
+# for skill in all_skills['skill_name']:
+#     normalized_skill = skill.lower().translate(str.maketrans('', '', string.punctuation))
+#     if normalized_skill not in normalized_skill_dict:
+#         normalized_skill_dict[normalized_skill] = []
+#     normalized_skill_dict[normalized_skill].append(skill)
+# # print(normalized_skill_dict)
+# def get_skills_for_cv(cv_skills, job_skills):
+#     matching_cv_skills = []
+#     recommended_cv_skills = ['test-not set']
+
+#     # Match normalized CV skills to normalized skills in the dataset
 #     for cv_skill in cv_skills:
-#         x = all_skills[all_skills['skill_name'].str.contains(cv_skill)]
-#         print(x['skill_name'].tolist())
-#         matching_cv_skills.extend(x['skill_name'].tolist())
-#
+#         normalized_cv_skill = cv_skill.lower().translate(str.maketrans('', '', string.punctuation))
+#         if normalized_cv_skill in normalized_skill_dict:
+#             # Find the most similar skill among the matching skills
+#             best_match_score = -1
+#             best_match_skill = ''
+#             for skill in normalized_skill_dict[normalized_cv_skill]:
+#                 score = fuzz.token_sort_ratio(normalized_cv_skill, skill.lower().translate(str.maketrans('', '', string.punctuation)))
+#                 if score > best_match_score:
+#                     best_match_score = score
+#                     best_match_skill = skill
+#             # Add the best matching skill to the list of matching CV skills
+#             if best_match_score > 60: # Set a threshold for similarity score
+#                 matching_cv_skills.append(best_match_skill)
+
 #     print("CV skills:", cv_skills)
 #     print("Job skills:", job_skills)
 #     print("Matching CV skills:", list(set(matching_cv_skills)))
 #     print("Recommended CV skills:", list(set(recommended_cv_skills)))
-#     return list(set(matching_cv_skills)),list(set(recommended_cv_skills))
-# from fuzzywuzzy import fuzz
-
-
-# Create a mapping of normalized skill forms to the original skill names
-normalized_skill_dict = {}
-for skill in all_skills['skill_name']:
-    normalized_skill = skill.lower().translate(str.maketrans('', '', string.punctuation))
-    if normalized_skill not in normalized_skill_dict:
-        normalized_skill_dict[normalized_skill] = []
-    normalized_skill_dict[normalized_skill].append(skill)
-# print(normalized_skill_dict)
-def get_skills_for_cv(cv_skills, job_skills):
-    matching_cv_skills = []
-    recommended_cv_skills = ['test-not set']
-
-    # Match normalized CV skills to normalized skills in the dataset
-    for cv_skill in cv_skills:
-        normalized_cv_skill = cv_skill.lower().translate(str.maketrans('', '', string.punctuation))
-        if normalized_cv_skill in normalized_skill_dict:
-            # Find the most similar skill among the matching skills
-            best_match_score = -1
-            best_match_skill = ''
-            for skill in normalized_skill_dict[normalized_cv_skill]:
-                score = fuzz.token_sort_ratio(normalized_cv_skill, skill.lower().translate(str.maketrans('', '', string.punctuation)))
-                if score > best_match_score:
-                    best_match_score = score
-                    best_match_skill = skill
-            # Add the best matching skill to the list of matching CV skills
-            if best_match_score > 60: # Set a threshold for similarity score
-                matching_cv_skills.append(best_match_skill)
-
-    print("CV skills:", cv_skills)
-    print("Job skills:", job_skills)
-    print("Matching CV skills:", list(set(matching_cv_skills)))
-    print("Recommended CV skills:", list(set(recommended_cv_skills)))
-    return list(set(matching_cv_skills)), list(set(recommended_cv_skills))
+#     return list(set(matching_cv_skills)), list(set(recommended_cv_skills))
 
 ##function to get the vector representation of a job description 
 def get_job_vector(job_description):
     #tokenize the job description into individual words
-    tokens = job_description.split()
+    tokens = job_description
 
     #get the vector representation of each word in the job description
     vectors = [my_model.wv[token] for token in tokens if token in my_model.wv]
@@ -256,29 +240,10 @@ def get_job_vector(job_description):
 #print(job_data['skills'][0])
 #print(get_job_vector(job_data['needed_skills'][0]))
 #store all job descriptions
-job_data = job_data.dropna(subset=['skills'])
+# job_data = job_data.dropna(subset=['skills'])
 all_job_vectors=[get_job_vector(i) for i in job_data['skills']]
 # print(len(all_job_vectors))
 
-# # #function to get top k similar jobs based on a given job description  
-def get_similar_jobs(cv, k):
-    #get the vector representation of the given job description  
-    query_vector = get_job_vector(cv)
-
-    #calculate cosine similarity between query vector and all other job vectors  
-    similarities = [np.dot(query_vector, other) / (np.linalg.norm(query_vector) * np.linalg.norm(other))
-                    if np.linalg.norm(other) != 0 else 0
-                    for other in all_job_vectors]
-
-    #sort similarities in descending order and get indices of top k most similar jobs  
-    topk = np.argsort(similarities)[::-1][:k]
-    sort = sorted(similarities, reverse=True)[:k]
-
-    results = []
-    for i in range(k):
-        result_dict = {"title": job_data.iloc[topk[i], 0], "similarity": sort[i]}
-        results.append(result_dict)
-    return results    
 
 
 
@@ -287,13 +252,11 @@ from flask import Flask, request ,render_template, url_for, send_from_directory,
 
 import os
 
-app = Flask(__name__)
+app = Flask(_name_)
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
-# @app.route('/static/<path:filename>')
-# def serve_static(filename):
-#     return send_from_directory('static', filename)
+
 
 @app.route('/', methods=['GET'])
 def start_page():
@@ -321,17 +284,44 @@ def show_result_page():
 
 def get_best_cvs(all_CVs_vectors, job_description, num_of_CVs): 
     query_vector = get_job_vector(job_description)
-    similarities = [np.dot(query_vector, other)/np.linalg.norm(query_vector)/np.linalg.norm(other) for other in all_CVs_vectors]
-    topk_indices = np.argsort(similarities)[::-1][:num_of_CVs]
-    topk_similarities = sorted(similarities, reverse=True)[:num_of_CVs]
-    return topk_indices, topk_similarities
+    # lsa = TruncatedSVD(n_components=100)
+    # lsa_matrix = lsa.fit_transform(all_CVs_vectors)
+    #
+    # # Transform the CV vector using the same vectorizer
+    # cv_lsa = lsa.transform(get_job_vector(job_description).reshape(1, -1))
+    # similarities = cosine_similarity(query_vector.reshape(1,-1),all_CVs_vectors)
+    #     # [np.dot(query_vector, other)/np.linalg.norm(query_vector)/np.linalg.norm(other) for other in all_CVs_vectors]
+    print(len(query_vector))
+    lsa = TruncatedSVD(n_components=60)
+    lsa_matrix = lsa.fit_transform(all_CVs_vectors)
+
+    # Transform the CV vector using the same vectorizer
+    cv_lsa = lsa.transform(query_vector.reshape(1, -1))
+
+    # Compute cosine similarity between the CV vector and the LSA matrix
+    similarities = cosine_similarity(cv_lsa, lsa_matrix)
+    topk_indices = np.argsort(similarities)[0][::-1][:num_of_CVs]
+    # # topk_indices = np.argsort(similarities)[::-1][:num_of_CVs]
+    # topk_similarities = sorted(similarities, reverse=True)[:num_of_CVs]
+
+    # Create a dataframe of the job titles and cosine similarities
+    data = {"topk_indices": all_CVs_vectors,
+            "cosine_similarity": similarities[0]}
+    df = pd.DataFrame(data)
+
+    topk_similarities = df.loc[topk_indices, ['cosine_similarity']]
+    print("from get best cv topk_similarities" ,topk_similarities['cosine_similarity'].tolist())
+    # similar_jobs = similar_jobs.drop_duplicates(subset='Job_title',keep = 'first')
+    return topk_indices, topk_similarities['cosine_similarity']
 
 
 def filter(CVs,job_description,num_of_CVs):
-  df = pd.DataFrame(CVs, columns=['Names','CVs','file_path','cv_info'])
-  #df['CVs']=data_preprossing(df['CVs'])
-  #cleaned_description=data_preprocessing_text(job_description)
+    # cv_text.append((filename, filepath, cv_skills_str, cv_info))  # include filename and filepath in the tuple
+  df = pd.DataFrame(CVs, columns=['Names','file_path','CVs','cv_info'])
+  print(df['CVs'])
+
   all_CVs_vectors=[get_job_vector(i) for i in df['CVs']]
+  # print("from filter function",all_CVs_vectors)
   top_CV,similarities=get_best_cvs(all_CVs_vectors,job_description, num_of_CVs)
   return top_CV,similarities
 
@@ -402,9 +392,11 @@ def predict_filtering():
 
 
             cv_info = { 'phone': phone, 'email': email}
-    
-            clean_text= data_preprocessing_text(text)   
-            cv_text.append((filename, filepath, clean_text,cv_info))  # include filename and filepath in the tuple
+
+            clean_text= data_preprocessing_text(text)
+            Cv_skills = extract_skills_1(clean_text) + extract_skills_2(clean_text)
+            # cv_skills_str = ' '.join(Cv_skills)
+            cv_text.append((filename, filepath, Cv_skills, cv_info))# include filename and filepath in the tuple
 
          # Get the number of CVs
         num_cvs = request.form.get('num_cvs')
@@ -422,35 +414,39 @@ def predict_filtering():
         # Preprocess text
         cleaned_job = data_preprocessing_text(job_description)
 
-        top_CV,similarities=filter(cv_text,cleaned_job,num_cvs)
-        # Pass the similar_jobs data to the templates
+        job_skills = extract_skills_1(cleaned_job) + extract_skills_2(cleaned_job)
+        # job_skills_str = ' '.join(job_skills)
+        top_CV, similarities = filter(cv_text, job_skills, num_cvs)
 
         # Initialize a list to store the file paths of the top CVs
         top_cv_files = []
+        # print(len(cv_text))
         for index in top_CV:
+           print(cv_text[index][1], similarities[index])
            top_cv_files.append(cv_text[index][1])  # append file path instead of file name
-        #print(top_cv_files)
+
+        # Pass the similar_jobs data to the templates
 
         return render_template('filtering_result.html', best_cvs=[cv_text[i] for i in top_CV.tolist()], top_cv_files=top_cv_files)
    return render_template('filtering_page.html')
 
 
 #Recommendation Task
-import threading
+# import threading
 
-def create_figure(job_title, cosine_similarity):
-    # Create the bar plot
-    color_map = cm.get_cmap('cool')  # choose a color map
-    colors = color_map(cosine_similarity)
-    fig, ax = plt.subplots(figsize=(8, 5))
-    ax.barh(job_title, cosine_similarity, color=colors)
-    ax.set_title('Top job recommendations based on similarity', fontsize=12)
-    plt.tight_layout()
+# def create_figure(job_title, cosine_similarity):
+#     # Create the bar plot
+#     color_map = cm.get_cmap('cool')  # choose a color map
+#     colors = color_map(cosine_similarity)
+#     fig, ax = plt.subplots(figsize=(8, 5))
+#     ax.barh(job_title, cosine_similarity, color=colors)
+#     ax.set_title('Top job recommendations based on similarity', fontsize=12)
+#     plt.tight_layout()
 
-    # Save the plot to a file and close the figure
-    plot_path = os.path.join(app.static_folder, 'bar_plot.png')
-    plt.savefig(plot_path)
-    plt.close(fig)
+#     # Save the plot to a file and close the figure
+#     plot_path = os.path.join(app.static_folder, 'bar_plot.png')
+#     plt.savefig(plot_path)
+#     plt.close(fig)
 @app.route('/recommendation_system', methods=['POST'])
 def predict_recommendation():
     if request.method == 'POST':
@@ -523,6 +519,8 @@ def recommendation_system_feature():
 
         # Generate a list of links for the similar jobs
         links = ['<li><a href="' + job + '" target="_blank">' + job + '</a></li>' for job in similar_jobs]
+        # print(job_title)
+        # print(links)
 
         # Return the list of links as a string
         return '<ul>' + '\n'.join(links) + '</ul>'
@@ -530,10 +528,8 @@ def recommendation_system_feature():
 
 
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     # app.config['UPLOAD_FOLDER'] = 'recommendation_files'
     # app.config['UPLOAD_FOLDER2'] = 'filtering_files'
 
     app.run(port=3000,debug=True)
-
-
