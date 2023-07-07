@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Recommendation Results</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+  <link href="img/favicon.ico" rel="icon">
+
+  <!-- Google Web Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500&family=Jost:wght@500;600;700&display=swap" rel="stylesheet"> 
+
+  <!-- Icon Font Stylesheet -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+      <!-- Libraries Stylesheet -->
+      <link href="{{ url_for('serve_static', path='lib/animate/animate.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('serve_static', path='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+      <link href="{{ url_for('serve_static', path='lib/lightbox/css/lightbox.min.css') }}" rel="stylesheet">
+  
+      <!-- Customized Bootstrap Stylesheet -->
+      <link href="{{ url_for('serve_static', path='css/bootstrap.min.css') }}" rel="stylesheet">
+  
+      <!-- Template Stylesheet -->
+      <link rel="stylesheet" href="{{ url_for('serve_static', path='css/style.css') }}">
+    <style>
+.containerr {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left:5%
+  }
+
+
+  .input-containerr {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .input-containerr label {
+    margin-right: 10px;
+  }
+
+  .bar-containerr {
+    width: 30%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .bar {
+    max-width: 100%;
+    height: auto;
+  }
+
+
+
+        @media (max-width: 768px) {
+          .containerr {
+            flex-direction: column;
+            align-items: center;
+            
+          }
+
+          .form-containerr {
+            width: 100%;
+            /* margin-left: 2000%; */
+          }
+
+        
+        }
+          .icon-bar {
+          width: 100%; /* Full-width */
+          background-color: rgba(98, 34, 204, .9); /* Dark-grey background */
+          overflow: auto; /* Overflow due to float */
+          }
+
+          .icon-bar a {
+          float: left; /* Float links side by side */
+          text-align: center; /* Center-align text */
+          width: 10%; /* Equal width (5 icons with 20% width each = 100%) */
+          padding: 1px 0; /* Some top and bottom padding */
+          transition: all 0.3s ease; /* Add transition for hover effects */
+          color: white; /* White text color */
+          font-size: 36px; /* Increased font size */
+          }
+              .icon-bar a:hover {
+          background-color: rgba(98, 34, 204, .9); /* Add a hover color */
+          }
+
+          .active {
+          background-color: rgba(255, 255, 255, .1); /* Add an active/current color */
+          }
+          p.text-center.mb-5 {
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.5;
+            margin-top: 20px;
+            margin-bottom: 30px;
+          }
+    </style>
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+        <div class="icon-bar">
+            <a class="active" href="/"><i class="fa fa-home"></i></a>
+            <h1 style="color: white; ">Recommendation Results</h1>
+            <!-- <a href="index.html"><i class="fa fa-search"></i></a> -->
+            <!-- <a href="#"><i class="fa fa-envelope"></i></a>
+            <a href="#"><i class="fa fa-globe"></i></a>
+            <a href="#"><i class="fa fa-trash"></i></a> -->
+        </div>
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="" class="navbar-brand p-0">
+                    <h1 class="m-0">Recommendation Results</h1>
+                   
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                
+            </nav>
+
+           
+        </div>
+        <!-- Navbar & Hero End -->
+        
+
+        <!-- Team Start -->
+        <div class="container-xxl py-5">
+            <div class="container py-5 px-lg-5">
+                <div class="wow fadeInUp" data-wow-delay="0.1s">
+                  <p class="text-center mb-5" style="font-weight: 300; font-weight: bold;">Based on your skills and experience, our AI-powered job matching tool has identified the following job opportunities that are a good fit for you.
+                    <br>Here are the top job recommendations based on your skills and experience, generated by our powerful machine learning algorithms.
+                  </p>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                        
+                    </div>
+                    <div style="height: -20%;" class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                        
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+                        
+                    </div>
+                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.5s">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Team End -->
+        <div class="containerr">
+      <div class="form-containerr">
+        <form id="job-select-form" method="POST" enctype="multipart/form-data">
+          <input type="hidden" id="cv-skills-input" name="cv_skills" value="{{ cv_skills }}">
+    
+          <div class="input-containerr">
+            <label for="job-select">Select a job:</label>
+            <select id="job-select" name="job">
+              {% for index, row in best_jobs.iterrows() %}
+              <option value="{{ row['Job_title'] }}">{{ row['Job_title'] }}</option>
+              {% endfor %}
+            </select>
+          </div>
+    
+          <div class="input-containerr">
+            <input type="radio" name="action" value="cv-skills" id="cv-skills" checked>
+            <label for="cv-skills">Get CV Skills</label>
+          </div>
+    
+          <div class="input-containerr">
+            <input type="radio" name="action" value="similar-jobs" id="similar-jobs">
+            <label for="similar-jobs">Get Similar Jobs</label>
+          </div>
+    
+          <button class="btn btn-secondary py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft" type="submit">Submit</button>
+        </form>
+      </div>
+    
+      <div class="bar-containerr">
+        <img src="{{ url_for('static', filename=plot_path) }}" alt="Bar plot" class="bar">
+      </div>
+    </div>
+    
+    <div id="similar-jobs"></div>
+    
+    <div id="matching-cv-skills"></div>
+    
+        
+        <br>
+
+             <!-- Footer Start -->
+       <div class="container-fluid bg-primary text-light footer wow fadeIn" data-wow-delay="0.1s">
+       
+        <div class="container px-lg-5">
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">Job Recommendations System</a>, All Right Reserved. 
+                        
+                        <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
+                        Designed By <a class="border-bottom" href="https://htmlcodex.com">HTML Codex</a>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <div class="footer-menu">
+                            <a href="/">Home</a>
+                            <!-- <a href="">Cookies</a>
+                             -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+   
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-secondary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('serve_static', path='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/counterup/counterup.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/isotope/isotope.pkgd.min.js') }}"></script>
+    <script src="{{ url_for('serve_static', path='lib/lightbox/js/lightbox.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('serve_static', path='js/main.js') }}"></script>
+<script>
+  // Add event listener for form submission
+  document.getElementById('job-select-form').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent default form submission behavior
+
+    var formData = new FormData(event.target);  // Create a new FormData object from the form data
+
+    // Get the value of the cv_skills input field
+    var cvSkillsInput = document.getElementById('cv-skills-input');
+    var cvSkillsValue = cvSkillsInput.value;
+
+    // Add the cv_skills value to the FormData object
+    formData.append('cv_skills', cvSkillsValue);
+
+    // Get the selected job title index from the form data
+    var jobTitleIndex = document.getElementById('job-select').selectedIndex;
+
+    // Get the selected job title and action from the form data
+    var jobTitle = formData.get('job_title');
+    var action = formData.get('action');
+
+    // Send an AJAX request to the server to handle the form submission
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+          // Handle the response from the server
+          var response = xhr.responseText;
+          console.log(response);
+
+          // Display the results on the page
+          if (formData.get('action') === 'similar-jobs') {
+            document.getElementById('similar-jobs').innerHTML = response;
+          } else if(formData.get('action') === 'cv-skills'){
+            document.getElementById('matching-cv-skills').innerHTML = response;
+          }
+        } else {
+          console.log('Error: ' + xhr.status);
+        }
+      }
+    };
+    xhr.open('POST', '/recommendation_system_feature', true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    // Send the AJAX request to the server with the correct form data
+    xhr.send('job=' + encodeURIComponent(jobTitle) + '&jobTitleIndex=' + encodeURIComponent(jobTitleIndex.toString()) + '&action=' + encodeURIComponent(action) + '&cv_skills=' + encodeURIComponent(cvSkillsValue));
+  });
+</script>
+</body>
+
+</html>
