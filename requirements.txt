@@ -9,9 +9,8 @@ stopwords
 scikit-learn
 cosine_similarity
 pyresparser
-docx
+python-docx
 Document
-exceptions
 fuzzywuzzy
 fuzz
 gensim
