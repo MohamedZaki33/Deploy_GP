@@ -251,17 +251,13 @@
 
           <button class="btn btn-secondary py-sm-3 px-sm-5 rounded-pill me-3 animated slideInLeft" type="submit">Submit</button>
         </form>
-<!--      </div>-->
-
-
-<!--    </div>-->
 
      <div style="margin-left: 20%;">
       <div>
-            <p style="margin-left: 3%;"> Here's a job link that's similar to what you're looking for </p>
+            <p style="margin-left: 3%;"> Here's a job link that's similar to what you're looking for : </p>
       </div>
       <div id="similar-jobs"></div>
-    </div>
+     </div>
 <!--    <div id="matching-cv-skills"></div>-->
 
 
@@ -317,9 +313,8 @@
         var jobTitleIndex = document.getElementById('job-select').selectedIndex;
 
         // Get the selected job title and action from the form data
-
-        //var jobTitle = formData.get('job_title');
         var jobTitle = document.getElementById('job-select').value ;
+        //formData.get('job_title');
         var action = formData.get('action');
 
         // Send an AJAX request to the server to handle the form submission
