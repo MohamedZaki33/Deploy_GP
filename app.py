@@ -1,4 +1,5 @@
 import difflib
+# import package_name
 import sqlite3
 import PyPDF2
 import pandas as pd
@@ -6,22 +7,7 @@ import numpy as np
 import ast
 import spacy
 import nltk
-import nltk
 
-try:
-    nltk.data.find('stopwords')
-except LookupError:
-    nltk.download('stopwords')
-
-try:
-    nltk.data.find('punkt')
-except LookupError:
-    nltk.download('punkt')
-
-try:
-    nltk.data.find('wordnet')
-except LookupError:
-    nltk.download('wordnet')
 from matplotlib import pyplot as plt, cm
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -29,7 +15,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.collocations import BigramAssocMeasures, BigramCollocationFinder
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
-from sklearn.metrics.pairwise import cosine_similarity, manhattan_distances
+from sklearn.metrics.pairwise import cosine_similarity , manhattan_distances
 from pyresparser import ResumeParser
 from docx import Document
 from googlesearch import search
@@ -37,18 +23,20 @@ from fuzzywuzzy import fuzz, process
 import gensim
 from builtins import enumerate
 from jinja2 import Environment
-
 env = Environment()
 env.globals.update(enumerate=enumerate)
 import string
 # nltk.download('punkt')
-
+# nltk.download('stopwords')
 # nltk.download('wordnet')
 
 import pickle
-
 with open('word2vecmodel.pkl', 'rb') as f:
     my_model = pickle.load(f)
+
+
+
+
 
 # Load job data from database
 conn = sqlite3.connect('data2.db')
@@ -58,8 +46,6 @@ conn.close()
 conn2 = sqlite3.connect('all_skills.db')
 all_skills = pd.read_sql_query('SELECT * FROM jobs', conn2)
 conn2.close()
-
-
 # print(job_data.head())
 
 # #Preprocessind
@@ -90,28 +76,31 @@ def data_preprocessing_text(text):
 
 
 def extract_skills_2(text):
-    # Create a new Word document
-    doc = Document()
-    # Add text to the document
-    doc.add_paragraph(text)
-    doc.save("text.docx")
-    data = ResumeParser('text.docx').get_extracted_data()
-    skills = data.get('skills', [])
-    return skills
+      # Create a new Word document
+      doc = Document()
+      # Add text to the document
+      doc.add_paragraph(text)
+      doc.save("text.docx")
+      data = ResumeParser('text.docx').get_extracted_data()
+      skills = data.get('skills', [])
+      return skills
+
+
 
 
 # Load pre-trained models and libraries
 spacy_model = spacy.load('en_core_web_sm')
 nltk_stopwords = set(stopwords.words('english'))
 
-
 # Define function to extract skills from a resume using multiple models and libraries
 def extract_skills_1(resume_text):
+
     # Use spaCy to extract noun chunks from resume text
     spacy_noun_chunks = [chunk.text for chunk in spacy_model(resume_text).noun_chunks]
 
     doc = spacy_model(resume_text)
     spacy_skills = [ent.text for ent in doc.ents if ent.label_ == 'ORG']
+
 
     # Use NLTK to extract keywords and phrases from resume text
     nltk_tokens = word_tokenize(resume_text)
@@ -124,16 +113,16 @@ def extract_skills_1(resume_text):
     nltk_finder.apply_freq_filter(1)
     nltk_phrases = nltk_finder.nbest(nltk_bigram_measures.raw_freq, 50)
 
-    nltk_skills = list(
-        set([keyword for keyword, freq in nltk_keywords] + [' '.join(phrase) for phrase in nltk_phrases]))
+    nltk_skills = list(set([keyword for keyword, freq in nltk_keywords] + [' '.join(phrase) for phrase in nltk_phrases]))
     # Combine all extracted skills into a single list and remove duplicates
-    skills = list(set(spacy_noun_chunks + spacy_skills + nltk_skills))
-    # Filter skills based on the provided list of technical skills
+    skills = list(set( spacy_noun_chunks + spacy_skills + nltk_skills))
+     # Filter skills based on the provided list of technical skills
     # import_skills = list(set([skill.lower() for skill in skills]) & set(technical_skills['name'].str.lower()))
-    return skills
+    return skills 
 
 
-# TFIDF
+
+#TFIDF
 
 # # check for duplicates
 # duplicates = job_data[job_data.duplicated()]
@@ -141,10 +130,10 @@ def extract_skills_1(resume_text):
 # print(duplicates)
 # drop duplicates and keep the first occurrence
 job_data = job_data.drop_duplicates()
-job_data = job_data.reset_index(drop=True)
+job_data= job_data.reset_index(drop=True)
 job_data = job_data.dropna(subset=['skills_1'])
 job_data = job_data[job_data['skills_1'].apply(len) > 0]
-job_data = job_data.reset_index(drop=True)
+job_data= job_data.reset_index(drop=True)
 job_data['skills_1'] = job_data.apply(lambda row: ast.literal_eval(row['skills_1']), axis=1)
 job_data['skills'] = job_data['skills_1'].apply(lambda row: ' '.join(row))
 # print(job_data)
@@ -175,9 +164,13 @@ def get_top_n_tfidf(cv_text, n):
     return similar_jobs
 
 
+
+
+
+
 def get_similar_jobs_for_job(job_title, num_results=5):
     query = f'{job_title} jobs)'
-    results = search(query, tld='com', num=num_results, stop=10, pause=2)
+    results= search(query, tld='com', num=num_results, stop=10, pause=2)
     similar_jobs = []
     for result in results:
         if "job" in result.lower():
@@ -190,6 +183,22 @@ def get_similar_jobs_for_job(job_title, num_results=5):
 
     # Return the list of similar jobs
     return similar_jobs[:num_results]
+# def get_skills_for_cv(cv_skills,job_skills):
+#     matching_cv_skills=[]
+#     recommended_cv_skills =['esraa']
+#     # cv_skills_str = " ".join(cv_skills)
+#     # cv_skills = cv_skills_str.split()
+#     for cv_skill in cv_skills:
+#         x = all_skills[all_skills['skill_name'].str.contains(cv_skill)]
+#         print(x['skill_name'].tolist())
+#         matching_cv_skills.extend(x['skill_name'].tolist())
+#
+#     print("CV skills:", cv_skills)
+#     print("Job skills:", job_skills)
+#     print("Matching CV skills:", list(set(matching_cv_skills)))
+#     print("Recommended CV skills:", list(set(recommended_cv_skills)))
+#     return list(set(matching_cv_skills)),list(set(recommended_cv_skills))
+# from fuzzywuzzy import fuzz
 
 
 # Create a mapping of normalized skill forms to the original skill names
@@ -228,13 +237,13 @@ def get_skills_for_cv(cv_skills, job_skills):
 
 ##function to get the vector representation of a job description 
 def get_job_vector(job_description):
-    # tokenize the job description into individual words
+    #tokenize the job description into individual words
     tokens = job_description
 
-    # get the vector representation of each word in the job description
+    #get the vector representation of each word in the job description
     vectors = [my_model.wv[token] for token in tokens if token in my_model.wv]
 
-    # calculate the average vector of all words in the job description
+    #calculate the average vector of all words in the job description
     if vectors:
         avg_vector = np.mean(vectors, axis=0)
     else:
@@ -243,22 +252,22 @@ def get_job_vector(job_description):
     return avg_vector
 
 
-# print(job_data['skills'][0])
-# print(get_job_vector(job_data['needed_skills'][0]))
-# store all job descriptions
-# job_data = job_data.dropna(subset=['skills'])
-all_job_vectors = [get_job_vector(i) for i in job_data['skills']]
+#print(job_data['skills'][0])
+#print(get_job_vector(job_data['needed_skills'][0]))
+#store all job descriptions
+job_data = job_data.dropna(subset=['skills'])
+all_job_vectors=[get_job_vector(i) for i in job_data['skills']]
 # print(len(all_job_vectors))
 
 
+
+
 # from flask import Flask,  render_template
-from flask import Flask, request, render_template, url_for, send_from_directory, jsonify
+from flask import Flask, request ,render_template, url_for, send_from_directory, jsonify
 
 import os
 
 app = Flask(__name__)
-
-
 @app.route('/static/<path:path>')
 def serve_static(path):
     return send_from_directory('static', path)
@@ -268,28 +277,27 @@ def serve_static(path):
 def start_page():
     return render_template('start_page.html')
 
-
 @app.route('/recommendation_page.html', methods=['GET'])
 def show_recommendation_page():
     return render_template('recommendation_page.html')
-
 
 @app.route('/team.html', methods=['GET'])
 def show_team_page():
     return render_template('team.html')
 
-
 @app.route('/filtering_page.html', methods=['GET'])
 def show_filtering_page():
     return render_template('filtering_page.html')
-
 
 @app.route('/result.html', methods=['GET'])
 def show_result_page():
     return render_template('result.html')
 
 
-def get_best_cvs(all_CVs_vectors, job_description, num_of_CVs):
+
+
+
+def get_best_cvs(all_CVs_vectors, job_description, num_of_CVs): 
     query_vector = get_job_vector(job_description)
     # lsa = TruncatedSVD(n_components=100)
     # lsa_matrix = lsa.fit_transform(all_CVs_vectors)
@@ -317,30 +325,28 @@ def get_best_cvs(all_CVs_vectors, job_description, num_of_CVs):
     df = pd.DataFrame(data)
 
     topk_similarities = df.loc[topk_indices, ['cosine_similarity']]
-    print("from get best cv topk_similarities", topk_similarities['cosine_similarity'].tolist())
+    print("from get best cv topk_similarities" ,topk_similarities['cosine_similarity'].tolist())
     # similar_jobs = similar_jobs.drop_duplicates(subset='Job_title',keep = 'first')
     return topk_indices, topk_similarities['cosine_similarity']
 
 
-def filter(CVs, job_description, num_of_CVs):
+def filter(CVs,job_description,num_of_CVs):
     # cv_text.append((filename, filepath, cv_skills_str, cv_info))  # include filename and filepath in the tuple
-    df = pd.DataFrame(CVs, columns=['Names', 'file_path', 'CVs', 'cv_info'])
-    print(df['CVs'])
+  df = pd.DataFrame(CVs, columns=['Names','file_path','CVs','cv_info'])
+  print(df['CVs'])
 
-    all_CVs_vectors = [get_job_vector(i) for i in df['CVs']]
-    # print("from filter function",all_CVs_vectors)
-    top_CV, similarities = get_best_cvs(all_CVs_vectors, job_description, num_of_CVs)
-    return top_CV, similarities
-
+  all_CVs_vectors=[get_job_vector(i) for i in df['CVs']]
+  # print("from filter function",all_CVs_vectors)
+  top_CV,similarities=get_best_cvs(all_CVs_vectors,job_description, num_of_CVs)
+  return top_CV,similarities
 
 import re
-
-
 def extract_names(text):
     name_regex = r'\b[A-Z][a-z]+ [A-Z][a-z]+\b'
     names = re.findall(name_regex, text)
     names = ', '.join(names)
     return names
+
 
 
 def extract_email(text):
@@ -349,16 +355,21 @@ def extract_email(text):
     emails = ', '.join(emails)
     return emails
 
-
 def extract_mobile_number(text):
-    phone = re.findall(r'[\+\(]?[1-9][0-9 .\-\(\)]{8,}[0-9]', text)
-
+    phone = re.findall(r'[\+\(]?[1-9][0-9 .\-\(\)]{8,}[0-9]',text)
+    
     if phone:
         number = ''.join(phone)
         if len(number) > 10:
-            return number
+            return  number
         else:
             return number
+
+
+
+
+
+
 
 
 # filter(cvs_lst,job,5)
@@ -367,7 +378,7 @@ def extract_mobile_number(text):
 
 @app.route('/flitering system', methods=['POST'])
 def predict_filtering():
-    if request.method == 'POST':
+   if request.method == 'POST':
         # Get the uploaded CV files
         cv_files = request.files.getlist('cv_files[]')
         if not cv_files:
@@ -390,24 +401,26 @@ def predict_filtering():
             for page in pdf_reader.pages:
                 text += page.extract_text()
 
-            phone = extract_mobile_number(text)
-            email = extract_email(text)
+            phone=extract_mobile_number(text)
+            email=extract_email(text)
 
-            cv_info = {'phone': phone, 'email': email}
 
-            clean_text = data_preprocessing_text(text)
+
+            cv_info = { 'phone': phone, 'email': email}
+
+            clean_text= data_preprocessing_text(text)
             Cv_skills = extract_skills_1(clean_text) + extract_skills_2(clean_text)
             # cv_skills_str = ' '.join(Cv_skills)
-            cv_text.append((filename, filepath, Cv_skills, cv_info))  # include filename and filepath in the tuple
+            cv_text.append((filename, filepath, Cv_skills, cv_info))# include filename and filepath in the tuple
 
-        # Get the number of CVs
+         # Get the number of CVs
         num_cvs = request.form.get('num_cvs')
         if num_cvs:
             num_cvs = int(num_cvs)
         else:
-            num_cvs = 1
+            num_cvs = 1 
 
-            # Get the job description text
+        # Get the job description text
         job_description = request.form.get('job_description')
         if not job_description:
             # If no text was entered, return an error message
@@ -424,32 +437,31 @@ def predict_filtering():
         top_cv_files = []
         # print(len(cv_text))
         for index in top_CV:
-            print(cv_text[index][1], similarities[index])
-            top_cv_files.append(cv_text[index][1])  # append file path instead of file name
+           print(cv_text[index][1], similarities[index])
+           top_cv_files.append(cv_text[index][1])  # append file path instead of file name
 
         # Pass the similar_jobs data to the templates
 
-        return render_template('filtering_result.html', best_cvs=[cv_text[i] for i in top_CV.tolist()],
-                               top_cv_files=top_cv_files)
-    return render_template('filtering_page.html')
+        return render_template('filtering_result.html', best_cvs=[cv_text[i] for i in top_CV.tolist()], top_cv_files=top_cv_files)
+   return render_template('filtering_page.html')
 
 
-# Recommendation Task
-# import threading
+#Recommendation Task
+import threading
 
-# def create_figure(job_title, cosine_similarity):
-#     # Create the bar plot
-#     color_map = cm.get_cmap('cool')  # choose a color map
-#     colors = color_map(cosine_similarity)
-#     fig, ax = plt.subplots(figsize=(8, 5))
-#     ax.barh(job_title, cosine_similarity, color=colors)
-#     ax.set_title('Top job recommendations based on similarity', fontsize=12)
-#     plt.tight_layout()
+def create_figure(job_title, cosine_similarity):
+    # Create the bar plot
+    color_map = cm.get_cmap('cool')  # choose a color map
+    colors = color_map(cosine_similarity)
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.barh(job_title, cosine_similarity, color=colors)
+    ax.set_title('Top job recommendations based on similarity', fontsize=12)
+    plt.tight_layout()
 
-#     # Save the plot to a file and close the figure
-#     plot_path = os.path.join(app.static_folder, 'bar_plot.png')
-#     plt.savefig(plot_path)
-#     plt.close(fig)
+    # Save the plot to a file and close the figure
+    plot_path = os.path.join(app.static_folder, 'bar_plot.png')
+    plt.savefig(plot_path)
+    plt.close(fig)
 @app.route('/recommendation_system', methods=['POST'])
 def predict_recommendation():
     if request.method == 'POST':
@@ -489,14 +501,12 @@ def predict_recommendation():
         # t.start()
 
         # Pass the similar_jobs data, plot path, matching CV skills, and recommended CV skills to the templates
-        return render_template('recommendation_result.html', best_jobs=result, plot_path='bar_plot.png',
-                               cv_skills=Cv_skills)
+        return render_template('recommendation_result.html', best_jobs=result, plot_path='bar_plot.png', cv_skills=Cv_skills)
 
     return render_template('recommendation_page.html')
-
-
 @app.route('/recommendation_system_feature', methods=['POST'])
 def recommendation_system_feature():
+
     # Get the selected job title and the action from the form data
     job_title = request.form['job']
     action = request.form['action']
@@ -514,8 +524,7 @@ def recommendation_system_feature():
         # cv_skills_list = []
         # cv_skills_list.extend(matching_cv_skills)
         # cv_skills_list.extend(recommended_cv_skills)
-        return '<ul>' + ' , '.join(matching_cv_skills) + '</ul>' + ' <br> ' + '<ul>' + ' , '.join(
-            recommended_cv_skills) + '</ul>'
+        return '<ul>' + ' , '.join(matching_cv_skills) + '</ul>' +' <br> '+'<ul>' + ' , '.join(recommended_cv_skills) + '</ul>'
         # return render_template('recommendation_result.html', matching_cv_skills=matching_cv_skills,
         #                        recommended_cv_skills=recommended_cv_skills)
 
@@ -533,8 +542,11 @@ def recommendation_system_feature():
     return render_template('recommendation_result.html')
 
 
-if __name__ == '_main_':
+
+if __name__ == '__main__':
     # app.config['UPLOAD_FOLDER'] = 'recommendation_files'
     # app.config['UPLOAD_FOLDER2'] = 'filtering_files'
 
-    app.run(port=3000, debug=True)
+    app.run(port=3000,debug=True)
+
+
